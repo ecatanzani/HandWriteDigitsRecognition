@@ -3,20 +3,21 @@ CNN model to recognize hand-written digits
 
 This is a Convolutional Neural Network model to recognize hand-written single digits.
 
-The model is built using TensorFlow Keras functional APIs.
+The model is built using TensorFlow Keras APIs.
 
 # CNN model
 
 This is the design of the model, using visualkeras:
 
-![model_layered_view](https://user-images.githubusercontent.com/18316072/163561288-8c947d3d-01c0-4cb0-93d6-9aa0f1de917d.png)
+![model_layered_view](https://user-images.githubusercontent.com/18316072/164393405-79befc05-309f-4626-a3dd-ae61c59d8f15.png)
 
-Here the performances of the network:
+The core of the model are three blocks of convolutional 2D layers with same padding, interspersed by max pooling layers and dropout (at 30%). After the convolutional blocks there is flatten layer which connects a feed-forward neural network with 50% dropout. The final layer is a softmax for classification.
 
-<img width="427" alt="Schermata 2022-04-15 alle 12 32 11" src="https://user-images.githubusercontent.com/18316072/163561007-796c8855-2ad1-4b72-b33c-78d2a31bfd9f.png">
+Here the network performances:
 
-<img width="399" alt="Schermata 2022-04-15 alle 12 34 35" src="https://user-images.githubusercontent.com/18316072/163561220-0efd4346-af89-4f8c-9af0-8b20663b8761.png">
+![Unknown](https://user-images.githubusercontent.com/18316072/164395125-49b6c47a-bf72-4e2a-936d-7376416e1c5f.png)
 
+![Unknown-2](https://user-images.githubusercontent.com/18316072/164395425-d9716a1c-3c16-46ed-83a1-b970cb558b5c.png)
 
 # Streamlit web-application
 
