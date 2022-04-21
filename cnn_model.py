@@ -29,23 +29,29 @@ x_test = x_test.astype('float32') / 255
 input_shape = (image_size, image_size, 1)
 batch_size = 128
 kernel_size = 3
-filters = 64
-dropout = 0.3
 
-# using functional API to build cnn layers
-inputs = Input(shape=input_shape)
-conv2d_l1 = Conv2D(filters=filters, kernel_size=kernel_size, activation='relu')(inputs)
-maxpool2d_l1 = MaxPooling2D()(conv2d_l1)
-conv2d_l2 = Conv2D(filters=filters, kernel_size=kernel_size, activation='relu')(maxpool2d_l1)
-maxpool2d_l2 = MaxPooling2D()(conv2d_l2)
-conv2d_l3 = Conv2D(filters=filters, kernel_size=kernel_size, activation='relu')(maxpool2d_l2)
-# convert image to vector 
-flat = Flatten()(conv2d_l3)
-# dropout regularization
-drop = Dropout(dropout)(flat)
-outputs = Dense(num_labels, activation='softmax')(drop)
-# model building by supplying inputs/outputs
-model = Model(inputs=inputs, outputs=outputs)
+#Define the model
+def build_model(input_shape, batch_size, kernel_size, num_labels, internal_dropout, external_dropout):
+    model = Sequential()
+    model.add(Input(shape=input_shape))
+    model.add(Conv2D(filters=32, kernel_size=kernel_size, activation='relu', kernel_initializer='he_uniform', padding='same'))
+    model.add(MaxPooling2D((2, 2)))
+    model.add(Dropout(internal_dropout))
+    model.add(Conv2D(filters=64, kernel_size=kernel_size, activation='relu', kernel_initializer='he_uniform', padding='same'))
+    model.add(MaxPooling2D((2, 2)))
+    model.add(Dropout(internal_dropout))
+    model.add(Conv2D(filters=128, kernel_size=kernel_size, activation='relu', kernel_initializer='he_uniform', padding='same'))
+    model.add(MaxPooling2D((2, 2)))
+    model.add(Dropout(internal_dropout))
+    model.add(Flatten())
+    model.add(Dense(128, activation='relu', kernel_initializer='he_uniform'))
+    model.add(Dropout(external_dropout))
+    model.add(Dense(128, activation='relu', kernel_initializer='he_uniform'))
+    model.add(Dropout(external_dropout))
+    model.add(Dense(num_labels, activation='softmax'))
+    return model
+
+model = build_model(input_shape, batch_size, kernel_size, num_labels, internal_dropout=0.3, external_dropout=0.5)
 
 # Plot the model
 font = ImageFont.truetype("arial.ttf", 32)
@@ -60,13 +66,26 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
 # Train the model
 model_history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=20, batch_size=batch_size)
 
-# Plot the categorical cross-entropy in the epochs
-plt.plot (model_history.history['loss'], 'o-', label="Training")
-plt.plot (model_history.history['val_loss'], 'o-', label="Validation")
+#Evaluate the network performances
+plt.plot(model_history.history['loss'], label="Training")
+plt.plot(model_history.history['val_loss'], label="Validation")
 
+plt.title("Loss")
 plt.yscale('log')
-plt.xlabel ("Epoch")
-plt.ylabel ("Categorical cross-entropy")
+plt.xlabel("Epoch")
+plt.ylabel("Categorical cross-entropy")
+
+plt.legend()
+plt.show()
+
+plt.plot(model_history.history['accuracy'], label="Training")
+plt.plot(model_history.history['val_accuracy'], label="Validation")
+
+plt.title("Accuracy")
+plt.xlabel("Epoch")
+plt.ylabel("Accuracy")
+plt.ylim(0.95, 1)
+
 plt.legend()
 plt.show()
 
