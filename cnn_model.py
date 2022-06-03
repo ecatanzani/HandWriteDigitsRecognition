@@ -91,7 +91,7 @@ plt.show()
 
 score = model.evaluate(x_test, y_test, batch_size=batch_size, verbose=False)
 
-print(f"Loss value: {score[0]} --> Model score: {score[1]*100} %")
+print(f"Loss value on test: {score[0]} --> Model score on test: {score[1]*100} %")
 
 # Save model to disk
 model.save("model_cnn.h5")
